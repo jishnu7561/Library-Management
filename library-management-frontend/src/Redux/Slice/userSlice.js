@@ -50,6 +50,8 @@ const userSlice = createSlice({
         logout:(state)=>{
             state.loggedUser = null;
             localStorage.removeItem('logged_user');
+            localStorage.removeItem('auth_token');
+            
         },
     }
 })

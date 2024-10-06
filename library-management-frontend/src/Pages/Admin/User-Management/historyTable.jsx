@@ -16,7 +16,7 @@ function HistoryTable({userId}) {
     const fetchUsers = (search = '', page = 0, userId) => {
       request(
           "GET",
-          `/api/admin/getAllHistory?search=${search}&page=${page}&userId=${userId}&size=${2}`,
+          `/api/admin/getAllHistory?search=${search}&page=${page}&userId=${userId}`,
           {}
       )
       .then(response => {
@@ -51,7 +51,7 @@ function HistoryTable({userId}) {
     
 
   return (
-    <div className="ml-64 h-screen  p-5 bg-grey-100 fixed p-32">
+    <div className="ml-64 h-screen bg-grey-100 fixed p-32">
         {/* Table container should have a margin to not overlap with the fixed sidebar */}
         <div className="flex flex-col bg-white p-10 gap-4 rounded-xl">
           <div className="flex justify-center items-center mx-5 my-4">
@@ -101,7 +101,7 @@ function HistoryTable({userId}) {
                     <button
                         onClick={() => handlePageChange(page - 1)}
                         disabled={page === 0}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        className="bg-indigo-500 hover:bg-indigo-700 text-xs text-white font-bold py-2 px-4 rounded"
                     >
                         Previous
                     </button>
@@ -109,7 +109,7 @@ function HistoryTable({userId}) {
                     <button
                         onClick={() => handlePageChange(page + 1)}
                         disabled={page === totalPages - 1}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        className="bg-indigo-500 hover:bg-indigo-700 text-xs text-white font-bold py-2 px-4 rounded"
                     >
                         Next
                     </button>

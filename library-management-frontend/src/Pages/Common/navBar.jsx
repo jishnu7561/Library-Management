@@ -1,17 +1,18 @@
-import React from 'react'
+import React, { useDebugValue } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { setAuthToken } from '../../APIs/userApi';
 import { toast } from 'sonner';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import CustomizedBreadcrumbs from './breadCrumbs';
+import { logout } from '../../Redux/Slice/userSlice';
 
 function NavBar() {
     const navigate = useNavigate();
-
+    const dispatch = useDispatch()
     const {loggedUser} = useSelector((state)=>state.user);
     const handleLogout = () => {
         setAuthToken(null);
-        localStorage.removeItem('logged_user');
+        dispatch(logout())
         toast.success("logged-out successfully");
         navigate("/login",{replace:true})
       };

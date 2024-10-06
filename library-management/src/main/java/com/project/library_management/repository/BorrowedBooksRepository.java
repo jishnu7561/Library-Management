@@ -10,9 +10,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BorrowedBooksRepository extends JpaRepository<BorrowedBooks,Integer> {
+
     BorrowedBooks findByUserId(int id);
 
-    Page<BorrowedBooks> findByUserId(Pageable pageable, int id);
+    Page<BorrowedBooks> findByUserId(Pageable pageable, Integer userId);
+
+    @Query("SELECT b FROM BorrowedBooks b WHERE b.returned_at IS NULL AND b.user.id = :userId")
+    Page<BorrowedBooks> findBorrowedBooksByUserId(Pageable pageable, Integer userId);
 
     Page<BorrowedBooks> findByBookTitleContainingIgnoreCaseAndUserId(String search, int userId, Pageable pageable);
 
@@ -24,5 +28,9 @@ public interface BorrowedBooksRepository extends JpaRepository<BorrowedBooks,Int
 
 //    Page<BorrowedBooks> findByUserId(Pageable pageable, Integer id);
 
-    Page<BorrowedBooks> findByBookTitleContainingIgnoreCaseAndBookAuthorContainingIgnoreCaseAndUserId(String title,String author, Pageable pageable, Integer id);
+    @Query("SELECT b FROM BorrowedBooks b " +
+            "WHERE b.returned_at IS NULL " +
+            "AND (b.book.title LIKE %:search% OR b.book.author LIKE %:search%) " +
+            "AND b.user.id = :userId")
+    Page<BorrowedBooks> findBorrowedBooksBySearch(@Param("search") String search, Pageable pageable,@Param("userId") Integer id);
 }

@@ -1,24 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import NavBar from '../../Common/navBar';
 import BookCard from './bookCard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import request from '../../../APIs/userApi';
+import { toast } from 'sonner';
+import { logout } from '../../../Redux/Slice/userSlice';
 
 function BooksExplore() {
     const { loggedUser } = useSelector((state) => state.user);
+    const dispatch = useDispatch()
     const [allBooks, setAllBooks] = useState([]);
     const [search, setSearch] = useState('');
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
 
     const fetchBooks = (search = '', page = 0) => {
-        request("GET", `/api/user/getAllBooksOnSearch?search=${search}&page=${page}&size=${4}`, {})
+        request("GET", `/api/user/getAllBooksOnSearch?search=${search}&page=${page}`, {})
             .then(response => {
                 console.log("Fetched books: ", response.data.content);
                 setAllBooks(response.data.content);
                 setTotalPages(response.data.totalPages);
             })
             .catch(error => {
+                if(error.status == 403) {
+                    toast.error("your account is blocked by user.")
+                    dispatch(logout());
+                }
                 console.error('Error fetching books:', error);
             });
     };
@@ -70,7 +77,7 @@ function BooksExplore() {
                     <button
                         onClick={() => handlePageChange(page - 1)}
                         disabled={page === 0}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
                     >
                         Previous
                     </button>
@@ -78,7 +85,7 @@ function BooksExplore() {
                     <button
                         onClick={() => handlePageChange(page + 1)}
                         disabled={page === totalPages - 1}
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
                     >
                         Next
                     </button>

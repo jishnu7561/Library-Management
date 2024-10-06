@@ -163,7 +163,7 @@ function Signup() {
                   className="w-5 h-5 mx-auto" // Adjust image size and position as needed
                   />
               ) : (
-              <span>LOGIN</span>
+              <span>SINGUP</span>
                 )}
             </button>
           </form>

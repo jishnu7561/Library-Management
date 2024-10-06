@@ -5,12 +5,14 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import request from '../../../APIs/userApi';
 import { toast } from 'sonner';
+import EditLimitDialog from './editLimitDialog';
 
 function BookTable() {
 
       const [selectedBook, setSelectedBook] = useState(null);
       const [openEdit, setOpenEdit] = useState(false);
       const [openAdd, setOpenAdd] = useState(false);
+      const [openEditLimit, setEditLimit] = useState(false)
 
       const { loggedUser } = useSelector((state) => state.user);
       const [allBooks, setAllBooks] = useState([]);
@@ -74,11 +76,15 @@ function BookTable() {
       const handleCloseDialog = () => {
         setSelectedBook(null); 
         setOpenAdd(false)
+        setEditLimit(false)
       };
 
 
       const handleAdd = () =>{
         setOpenAdd(true)
+      }
+      const handleEditLmit = () =>{
+        setEditLimit(true)
       }
 
       const handleEditSubmit = (updatedBook) => {
@@ -87,6 +93,10 @@ function BookTable() {
             book.id === updatedBook.id ? updatedBook : book
           )
         );
+      };
+
+      const handleAddBook = (newBook) => {
+        setAllBooks((prevBooks) => [...prevBooks, newBook]); 
       };
     
       return (
@@ -104,7 +114,10 @@ function BookTable() {
                 onChange={(e)=>setSearch(e.target.value)}
               />
             </div>
-            <div className='text-black py-1 px-3 border-2 border-black rounded-2xl cursor-pointer' onClick={() => handleAdd()}>+Book</div>
+            <div className='flex gap-2'>
+            <div className='text-indigo-500 py-1 px-3 border-2 border-indigo-400 rounded-2xl cursor-pointer' onClick={() => handleAdd()}>+Book</div>
+            <div className='text-white py-1 px-3 border-2 bg-indigo-400 rounded-2xl cursor-pointer' onClick={() =>handleEditLmit()}>Limit</div>
+            </div>
           </div>
   
           <table className="w-full text-sm text-left rtl:text-right text-black">
@@ -134,7 +147,7 @@ function BookTable() {
                     </td>
                   <td className="px-6 py-4">
                       <button
-                        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 mb-2 bg-green-500 `}
+                        className={`text-white hover:bg-blue-600 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 bg-blue-500 `}
                         onClick={() => handleEdit(book)}>
                         Edit
                       </button>
@@ -148,14 +161,14 @@ function BookTable() {
             <button
               onClick={() => handlePageChange(page - 1)}
               disabled={page === 0}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              className="bg-indigo-500 hover:bg-indigo-700 text-xs text-white font-bold py-2 px-4 rounded">
               Previous
             </button>
             <span className="text-black mx-4">{page + 1} / {totalPages}</span>
             <button
               onClick={() => handlePageChange(page + 1)}
               disabled={page === totalPages - 1}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              className="bg-indigo-500 hover:bg-indigo-700 text-xs text-white font-bold py-2 px-4 rounded">
               Next
             </button>
           </div>
@@ -174,7 +187,14 @@ function BookTable() {
         <AddBookDialogs
           open={openAdd}
           handleClose={handleCloseDialog} 
-          user={allBooks[0]} // Pass the selected user to the dialog
+          onAddBook={handleAddBook} // Pass the selected user to the dialog
+        />
+       }
+
+        {openEditLimit &&
+        <EditLimitDialog
+          open={openEditLimit}
+          handleClose={handleCloseDialog} 
         />
        }
       </div>

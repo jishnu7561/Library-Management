@@ -145,4 +145,9 @@ public class UserService implements UserDetailsService {
                 .timestamp(LocalDateTime.now())
                 .build();
     }
+
+    public boolean isUserBlocked(String userEmail) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(()-> new UserNotFoundException("user not found"));
+        return user.isBlocked();
+    }
 }

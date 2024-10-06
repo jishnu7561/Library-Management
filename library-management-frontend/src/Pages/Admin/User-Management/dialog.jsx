@@ -58,8 +58,7 @@ export default function EditUserDialog({ open, handleClose, user ,onSubmit}) {
       return false;
     }
 
-    if (number.length == 10) {
-     
+    if (number.toString().length === 10) {
       return true;
     } else{
       toast.error('Invalid mobile number')
@@ -70,14 +69,13 @@ export default function EditUserDialog({ open, handleClose, user ,onSubmit}) {
 
     const editHandler = async (userId) => {
       // e.preventDefault();
-      alert(userId)
       if (!validateForm()) {
         return;
       }
       
         dispatch(initiateLogin())
       try {
-        const response =  await request("PUT", '/api/admin/editUser', {
+        const response =  await request("PUT", '/api/user/editUser', {
           id:userId,
           name,
           email,

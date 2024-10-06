@@ -6,6 +6,7 @@ import request from '../../../APIs/userApi';
 import Swal from 'sweetalert2';
 import ViewDialog from './viewDialog';
 import { Navigate, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 function BasicTable() {
 
@@ -58,7 +59,7 @@ function BasicTable() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await request("PUT", `/api/admin/ManageBlockUser/${id}`, {});
+                    const response = await request("PUT", `/api/admin/manageBlockUser/${id}`, {});
                     if (response.data?.message) {
                         const message = response.data.message;
                         if (message.includes("Success")) {
@@ -158,14 +159,14 @@ function BasicTable() {
                   ) : <td></td>}
                     <td className="px-6 py-4">
                       <button
-                        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 mb-2 ${user.blocked ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`}
+                        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 mb-2 hover:bg-blue-700 bg-blue-600`}
                         onClick={() => handleEdit(user)}>
                         Edit
                       </button>
                     </td>
                     <td className="px-6 py-4">
                       <button
-                        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 mb-2 ${user.blocked ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}`}
+                        className={`text-white hover:bg-indigo-700 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 bg-indigo-600`}
                         onClick={() => navigate("/admin/borrowed-history/"+user.id)}>
                         View
                       </button>
@@ -179,14 +180,14 @@ function BasicTable() {
             <button
               onClick={() => handlePageChange(page - 1)}
               disabled={page === 0}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold text-xs py-2 px-4 rounded">
               Previous
             </button>
             <span className="text-black mx-4">{page + 1} / {totalPages}</span>
             <button
               onClick={() => handlePageChange(page + 1)}
               disabled={page === totalPages - 1}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold text-xs py-2 px-4 rounded">
               Next
             </button>
           </div>

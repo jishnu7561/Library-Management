@@ -31,8 +31,13 @@ public class UserController {
     @Autowired
     private BookService bookService;
 
-    @PutMapping("/editProfile")
-    public ResponseEntity<UserDTO> editProfile(@RequestBody UserDTO userDTO) {
+//    @PutMapping("/editProfile")
+//    public ResponseEntity<UserDTO> editProfile(@RequestBody UserDTO userDTO) {
+//        return ResponseEntity.ok(userService.editUser(userDTO));
+//    }
+
+    @PutMapping("/editUser")
+    public ResponseEntity<UserDTO> editUser(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.editUser(userDTO));
     }
 
@@ -50,7 +55,7 @@ public class UserController {
     }
 
     @GetMapping("/getAllBooksOnSearch")
-    public ResponseEntity<Page<Book>> getAllBooks(@RequestParam(defaultValue = "1") int size,
+    public ResponseEntity<Page<Book>> getAllBooks(@RequestParam(defaultValue = "3") int size,
                                                   @RequestParam(defaultValue = "") String search,
                                                   @RequestParam(defaultValue = "0") int page) {
 
@@ -59,7 +64,7 @@ public class UserController {
 
 
     @GetMapping("/getAllBorrowedBooksOnSearch")
-    public  ResponseEntity<Page<BorrowedBooks>> getBorrowedBooks(@RequestParam(defaultValue = "1") int size,
+    public  ResponseEntity<Page<BorrowedBooks>> getBorrowedBooks(@RequestParam(defaultValue = "3") int size,
                                                                  @RequestParam(defaultValue = "") String search,
                                                                  @RequestParam(defaultValue = "0") int page,
                                                                  @RequestHeader("Authorization") String header) {

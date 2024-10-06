@@ -3,6 +3,7 @@ package com.project.library_management.service;
 import com.project.library_management.customException.exceptions.UserNotFoundException;
 import com.project.library_management.dto.BookDTO;
 import com.project.library_management.model.Book;
+import com.project.library_management.model.BorrowedBooks;
 import com.project.library_management.model.LibrarySettings;
 import com.project.library_management.repository.BookRepository;
 import com.project.library_management.repository.LibrarySettingsRepository;
@@ -147,6 +148,7 @@ public class BookService {
         return bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseAndArchivedFalse(search,search,pageable);
 
     }
+
 
 //    public void checkForBlockedUsers() {
 //        List<User> users = userRepository.findAll();

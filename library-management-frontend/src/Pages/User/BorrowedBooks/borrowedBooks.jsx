@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import NavBar from '../../Common/navBar';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import request from '../../../APIs/userApi';
 import BorrowedBookCard from './borrowedBookCard';
+import { logout } from '../../../Redux/Slice/userSlice';
 
 function BorrowedBooks() {
+    const dispatch = useDispatch()
     const { loggedUser } = useSelector((state) => state.user);
     const [allBorrowedBooks, setAllBorrowedBooks] = useState([]);
     const [search, setSearch] = useState('');
@@ -12,15 +14,19 @@ function BorrowedBooks() {
     const [totalPages, setTotalPages] = useState(1);
 
     const fetchBooks = (search = '', page = 0) => {
-        request("GET", `/api/user/getAllBorrowedBooksOnSearch?search=${search}&page=${page}&size=${4}`, {})
+        request("GET", `/api/user/getAllBorrowedBooksOnSearch?search=${search}&page=${page}`, {})
             .then(response => {
                 console.log("Fetched books: ", response.data);
                 // Filter books where returnedAt is null
-                const filteredBooks = response.data.content.filter(book => book.returned_at === null);
-                setAllBorrowedBooks(filteredBooks);
+                // const filteredBooks = response.data.content.filter(book => book.returned_at === null);
+                setAllBorrowedBooks(response.data.content);
                 setTotalPages(response.data.totalPages); // You might want to adjust this based on filtered results
             })
             .catch(error => {
+                if(error.status == 403) {
+                    toast.error("your account is blocked by user.")
+                    dispatch(logout());
+                }
                 console.error('Error fetching books:', error);
             });
     };

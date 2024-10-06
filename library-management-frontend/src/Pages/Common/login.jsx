@@ -54,7 +54,7 @@ const Login = () => {
         console.log("Login successful");
         dispatch(loginSuccessful(response.data.user))
         setAuthToken(response.data.jwtToken)
-        response.data.user.role === 'ADMIN' ? navigate("/admin/user-management") : navigate("/");
+        response.data.user.role === 'ADMIN' ? navigate("/admin/users-management") : navigate("/");
       } else {
         dispatch(loginFailed(response.data.message))
         toast.error(response.data.message)
@@ -116,11 +116,11 @@ const Login = () => {
               />
             </div>
 
-            <div className="flex items-center justify-end mb-4">
+            {/* <div className="flex items-center justify-end mb-4">
               <a href="#" className="text-sm text-indigo-600 hover:underline">
                 Forgot password?
               </a>
-            </div>
+            </div> */}
 
             <button
               type="submit"

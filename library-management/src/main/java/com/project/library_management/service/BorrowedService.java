@@ -6,6 +6,7 @@ import com.project.library_management.customException.exceptions.UserNotFoundExc
 import com.project.library_management.jwt.JwtService;
 import com.project.library_management.model.Book;
 import com.project.library_management.model.BorrowedBooks;
+import com.project.library_management.model.LibrarySettings;
 import com.project.library_management.model.User;
 import com.project.library_management.repository.BookRepository;
 import com.project.library_management.repository.BorrowedBooksRepository;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -119,10 +121,10 @@ public class BorrowedService {
                     orElseThrow(() -> new UserNotFoundException("user not found"));
 
             if(Objects.equals(search,"")) {
-                Page<BorrowedBooks> borrowedBooks = borrowedBooksRepository.findByUserId(pageable, user.getId());
+                Page<BorrowedBooks> borrowedBooks = borrowedBooksRepository.findBorrowedBooksByUserId(pageable, user.getId());
                 return borrowedBooks;
             }
-            return borrowedBooksRepository.findByBookTitleContainingIgnoreCaseAndBookAuthorContainingIgnoreCaseAndUserId(search,search, pageable,user.getId());
+            return borrowedBooksRepository.findBorrowedBooksBySearch(search, pageable,user.getId());
         } catch (UserNotFoundException e) {
             throw new UserNotFoundException(e.getMessage());
         }
@@ -145,6 +147,29 @@ public class BorrowedService {
                     .timestamp(LocalDateTime.now())
                     .build();
         } catch (UserNotFoundException e){
+            throw new UserNotFoundException(e.getMessage());
+        }
+    }
+
+    public BasicResponse updateBorrowedLimit(Integer limit) {
+        List<LibrarySettings> librarySettings = librarySettingsRepository.findAll();
+
+        LibrarySettings librarySettings1 = librarySettings.get(0);
+        librarySettings1.setBorrow_limit(limit);
+        librarySettings1.setUpdated_at(LocalDateTime.now());
+        librarySettingsRepository.save(librarySettings1);
+        return BasicResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("updated successfully")
+                .description("Borrowed books limit updated")
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    public LibrarySettings limitDetails() {
+        try {
+            return librarySettingsRepository.findById(1).orElseThrow(()-> new UserNotFoundException("not found"));
+        } catch (UserNotFoundException e) {
             throw new UserNotFoundException(e.getMessage());
         }
     }

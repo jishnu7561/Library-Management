@@ -10,6 +10,7 @@ import com.project.library_management.service.BookService;
 import com.project.library_management.service.BorrowedService;
 import com.project.library_management.service.UserService;
 import com.project.library_management.util.BasicResponse;
+import jakarta.persistence.Basic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,8 +21,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin")
-//@CrossOrigin(origins = "http://localhost:5173")
-//@CrossOrigin
 public class AdminController {
 
     @Autowired
@@ -34,14 +33,13 @@ public class AdminController {
     private BorrowedService borrowedService;
 
     @GetMapping("/getAllUsersOnSearch")
-    public ResponseEntity<Page<User>> getAllUsers(@RequestParam(defaultValue = "1") int size,
+    public ResponseEntity<Page<User>> getAllUsers(@RequestParam(defaultValue = "3") int size,
                                                   @RequestParam(defaultValue = "") String search,
                                                   @RequestParam(defaultValue = "0") int page) {
 
         return ResponseEntity.ok(userService.getAllUsersBasedOnSearch(search, PageRequest.of(page, size)));
     }
 
-//    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping("/addBook")
     public ResponseEntity<BasicResponse> addBooks(@RequestBody BookDTO bookDTO) {
 
@@ -55,7 +53,7 @@ public class AdminController {
     }
 
     @GetMapping("/getAllBooksOnSearch")
-    public ResponseEntity<Page<Book>> getAllBooks(@RequestParam(defaultValue = "4") int size,
+    public ResponseEntity<Page<Book>> getAllBooks(@RequestParam(defaultValue = "3") int size,
                                                   @RequestParam(defaultValue = "") String search,
                                                   @RequestParam(defaultValue = "0") int page) {
 
@@ -67,8 +65,8 @@ public class AdminController {
         return ResponseEntity.ok(bookService.manageArchiveAndUnArchive(id));
     }
 
-    @PutMapping("/ManageBlockUser")
-    public ResponseEntity<BasicResponse> manageBlockAndUnblock(@RequestParam int id) {
+    @PutMapping("/manageBlockUser/{id}")
+    public ResponseEntity<BasicResponse> manageBlockAndUnblock(@PathVariable("id") int id) {
         return ResponseEntity.ok(userService.manageBlockAndUnblock(id));
     }
 
@@ -77,10 +75,10 @@ public class AdminController {
         return ResponseEntity.ok(bookService.editBook(bookDTO));
     }
 
-    @PutMapping("/editUser")
-    public ResponseEntity<UserDTO> editUser(@RequestBody UserDTO userDTO) {
-        return ResponseEntity.ok(userService.editUser(userDTO));
-    }
+//    @PutMapping("/editUser")
+//    public ResponseEntity<UserDTO> editUser(@RequestBody UserDTO userDTO) {
+//        return ResponseEntity.ok(userService.editUser(userDTO));
+//    }
 
     @GetMapping("/borrowedHistory/{id}")
     public ResponseEntity<BorrowedBooks> getBorrowedHistory(@PathVariable int id) {
@@ -93,11 +91,21 @@ public class AdminController {
     }
 
     @GetMapping("getAllHistory")
-    public ResponseEntity<Page<BorrowedBooks>> getAllHistory(@RequestParam(defaultValue = "4") int size,
+    public ResponseEntity<Page<BorrowedBooks>> getAllHistory(@RequestParam(defaultValue = "3") int size,
                                                              @RequestParam(defaultValue = "") String search,
                                                              @RequestParam(defaultValue = "0") int page,
                                                              @RequestParam int userId){
         System.out.println("===================================================");
         return ResponseEntity.ok(borrowedService.getAllBorrowedBooksHistory(search,userId,PageRequest.of(page,size)));
+    }
+
+    @PutMapping("/updateBorrowLimit/{quantity}")
+    public ResponseEntity<BasicResponse> updateLimit(@PathVariable("quantity") Integer limit) {
+        return ResponseEntity.ok(borrowedService.updateBorrowedLimit(limit));
+    }
+
+    @GetMapping("/limitDetails")
+    public ResponseEntity<LibrarySettings> limitDetails() {
+        return ResponseEntity.ok(borrowedService.limitDetails());
     }
 }

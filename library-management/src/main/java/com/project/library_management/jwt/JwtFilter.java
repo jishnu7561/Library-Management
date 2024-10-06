@@ -1,5 +1,6 @@
 package com.project.library_management.jwt;
 
+import com.project.library_management.customException.exceptions.UserBlockedException;
 import com.project.library_management.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -37,12 +38,6 @@ public class JwtFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        // Bypass JWT filter for OPTIONS requests (preflight requests)
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            filterChain.doFilter(request, response);
-            return;
-        }
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
@@ -53,7 +48,6 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
         // Extract JWT token from Authorization header
         jwt = authHeader.substring(7);
         userEmail = jwtService.extractUsername(jwt);
@@ -61,6 +55,10 @@ public class JwtFilter extends OncePerRequestFilter {
         // Check if userEmail is valid and user is not already authenticated
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.loadUserByUsername(userEmail);
+            try {
+                if (userService.isUserBlocked(userEmail)) {
+                    throw new UserBlockedException(userEmail + " your account is blocked by the admin.");
+                }
 
             // Validate JWT and set authentication if valid
             if(jwtService.isTokenValid(jwt, userDetails)) {
@@ -73,6 +71,9 @@ public class JwtFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+            } catch (UserBlockedException e) {
+                throw new UserBlockedException(e.getMessage());
             }
         }
 
