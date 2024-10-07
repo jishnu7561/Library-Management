@@ -1,6 +1,6 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "http://13.49.145.178:8080"
+axios.defaults.baseURL = "https://13.49.145.178:8080"
 
 // const getAuthToken = () => {
 //     return window.localStorage.getItem("auth_token");
